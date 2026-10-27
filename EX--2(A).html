@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SPICE VERSE</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: rgb(255, 240, 201);
+            margin: 0;
+        }
+        header {
+            background: red;
+            color: whitesmoke;
+            text-align: center;
+            padding: 15px;
+        }
+        .login,
+        .cart,
+        .pay {
+            background: whitesmoke;
+            margin: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 0 8px gray;
+        }
+        input,
+        select,
+        button {
+            padding: 8px;
+            margin: 5px;
+            width: 95%;
+            box-sizing: border-box;
+        }
+        button {
+            background: gold;
+            border: none;
+            color: black;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: rgb(79, 202, 79);
+            color: whitesmoke;
+        }
+        .menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            padding: 15px;
+        }
+        .card {
+            background: whitesmoke;
+            border-left: 6px solid rgb(106, 27, 27);
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 6px grey;
+        }
+        h3 {
+            color: rgb(197, 43, 43);
+        }
+        .food-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid whitesmoke;
+            padding: 8px 0;
+        }
+        .food-item button {
+            width: auto;
+            min-width: 90px;
+            margin: 0;
+        }
+        .food-name {
+            flex: 1;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid whitesmoke;
+        }
+        .cart-item button {
+            width: auto;
+            margin: 2px;
+            padding: 6px 10px;
+        }
+        .cart-actions {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .total {
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head> 
+<body>
+    <header>
+        <h1>🍛 SPICE VERSE</h1>
+        <p>Affordable South Indian Food Delivery</p>
+    </header>
+    <div class="login">
+        <h3>Login</h3>
+        <input type="text" id="name" placeholder="Enter Name">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <p id="msg"></p>
+    </div>
+    <div class="menu">
+        <div class="card">
+            <h3>🍽 Amma's Kitchen</h3>
+            <div class="food-item">
+                <span class="food-name">Masala Dosa - ₹90</span>
+                <button onclick="add('Masala Dosa', 90)">Add</button>
+            </div>
+            <div class="food-item">
+                <span class="food-name">Idli - ₹50</span>
+                <button onclick="add('Idli', 50)">Add</button>
+            </div>
+            <div class="food-item">
+                <span class="food-name">Payasam - ₹70</span>
+                <button onclick="add('Payasam', 70)">Add</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🌶 Chettinad Express</h3>
+            <div class="food-item">
+                <span class="food-name">Meals - ₹150</span>
+                <button onclick="add('Meals', 150)">Add</button>
+            </div>
+            <div class="food-item">
+                <span class="food-name">Parotta - ₹60</span>
+                <button onclick="add('Parotta', 60)">Add</button>
+            </div>
+            <div class="food-item">
+                <span class="food-name">Kesari - ₹50</span>
+                <button onclick="add('Kesari', 50)">Add</button>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🍌 Banana Leaf</h3>
+            <div class="food-item">
+                <span class="food-name">Pongal - ₹80</span>
+                <button onclick="add('Pongal', 80)">Add</button>
+            </div>
+            <div class="food-item">
+                <span class="food-name">Vada - ₹40</span>
+                <button onclick="add('Vada', 40)">Add</button>
+            </div>
+            <div class="food-item">
+                <span class="food-name">Mysore Pak - ₹60</span>
+                <button onclick="add('Mysore Pak', 60)">Add</button>
+            </div>
+        </div>
+    </div>
+    <div class="cart">
+        <h3>🛒 Your Cart</h3>
+        <div id="cartItems">
+            Your cart is empty.
+        </div>
+        <p class="total">
+            Total Bill: ₹<span id="bill">0</span>
+        </p>
+        <button onclick="clearCart()">Clear Cart</button>
+    </div>
+    <div class="pay">
+        <h3>💳 Payment</h3>
+        <input type="text" id="address" placeholder="Delivery Address">
+        <select id="payment">
+            <option>Cash on Delivery</option>
+            <option>UPI</option>
+            <option>Debit/Credit Card</option>
+        </select>
+        <button onclick="order()">Place Order</button>
+        <p id="orderMsg"></p>
+    </div>
+    <script>
+        let cart = {};
+        function login() {
+            let n = document.getElementById("name").value.trim();
+
+            document.getElementById("msg").textContent =
+                n === "" ? "Enter your name" : "Welcome " + n + " 👋";
+        }
+        function add(name, price) {
+            if (cart[name]) {
+                cart[name].quantity++;
+            } else {
+                cart[name] = {
+                    price: price,
+                    quantity: 1
+                };
+            }
+            document.getElementById("orderMsg").textContent = "";
+            updateCart();
+        }
+        function updateCart() {
+            let container = document.getElementById("cartItems");
+            let total = 0;
+            container.innerHTML = "";
+            let items = Object.keys(cart);
+            if (items.length === 0) {
+                container.textContent = "Your cart is empty.";
+            }
+            items.forEach(name => {
+                let item = cart[name];
+                let subtotal = item.price * item.quantity;
+                total += subtotal;
+                let row = document.createElement("div");
+                row.className = "cart-item";
+                let details = document.createElement("span");
+                details.textContent =
+                    name + " (₹" + item.price + " × " +
+                    item.quantity + ") = ₹" + subtotal;
+                let actions = document.createElement("div");
+                actions.className = "cart-actions";
+                let minus = document.createElement("button");
+                minus.textContent = "−";
+                minus.setAttribute("aria-label", "Remove one " + name);
+                minus.onclick = () => changeQuantity(name, -1);
+                let plus = document.createElement("button");
+                plus.textContent = "+";
+                plus.setAttribute("aria-label", "Add one " + name);
+                plus.onclick = () => changeQuantity(name, 1);
+                actions.append(minus, plus);
+                row.append(details, actions);
+                container.appendChild(row);
+            });
+            document.getElementById("bill").textContent = total;
+        }
+        function changeQuantity(name, amount) {
+            if (!cart[name]) return;
+            cart[name].quantity += amount;
+            if (cart[name].quantity <= 0) {
+                delete cart[name];
+            }
+            updateCart();
+        }
+        function clearCart() {
+            cart = {};
+            updateCart();
+            document.getElementById("orderMsg").textContent = "";
+        }
+        function order() {
+            let total = Object.values(cart).reduce(
+                (sum, item) => sum + item.price * item.quantity,
+                0
+            );
+            let address = document.getElementById("address").value.trim();
+            let payment = document.getElementById("payment").value;
+            let name = document.getElementById("name").value.trim();
+            if (!name) {
+                alert("Please login before placing your order.");
+                return;
+            }
+            if (total === 0) {
+                alert("Your cart is empty!");
+                return;
+            }
+            if (!address) {
+                alert("Please enter your delivery address.");
+                return;
+            }
+            let summary = Object.entries(cart)
+                .map(([name, item]) =>
+                    name + " x " + item.quantity +
+                    " = ₹" + item.price * item.quantity
+                )
+                .join("\n");
+            alert(
+                "🎉 Order Placed Successfully!\n\n" +
+                "Customer: " + name + "\n\n" +
+                summary + "\n\n" +
+                "Total: ₹" + total + "\n" +
+                "Payment: " + payment +
+                "\n\nThank you for choosing SPICE VERSE!"
+            );
+            clearCart();
+        }
+    </script>
+</body>
+</html>
